@@ -66,10 +66,10 @@ RULES:
 - Only include the relevant dimension fields for each geometry type`;
 
 async function handleWeaponGeneration(request: Request, env: any): Promise<Response> {
-  const apiKey = env.ANTHROPIC_API_KEY;
+  const apiKey = env.OPENROUTER_API_KEY;
   if (!apiKey) {
     return Response.json(
-      { error: "ANTHROPIC_API_KEY not configured" },
+      { error: "OPENROUTER_API_KEY not configured" },
       { status: 500 }
     );
   }
@@ -86,31 +86,34 @@ async function handleWeaponGeneration(request: Request, env: any): Promise<Respo
   }
 
   try {
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
+    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-api-key": apiKey,
-        "anthropic-version": "2023-06-01",
+        "Authorization": `Bearer ${apiKey}`,
+        "HTTP-Referer": "https://github.com",
+        "X-OpenRouter-Title": "turds",
       },
       body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
+        model: "stepfun/step-3.5-flash:free",
         max_tokens: 1024,
-        system: WEAPON_SYSTEM_PROMPT,
-        messages: [{ role: "user", content: body.prompt }],
+        messages: [
+          { role: "system", content: WEAPON_SYSTEM_PROMPT },
+          { role: "user", content: body.prompt },
+        ],
       }),
     });
 
     if (!response.ok) {
       const text = await response.text();
       return Response.json(
-        { error: `Anthropic API error: ${response.status}`, details: text },
+        { error: `OpenRouter API error: ${response.status}`, details: text },
         { status: 502 }
       );
     }
 
     const data: any = await response.json();
-    const text = data.content?.[0]?.text || "";
+    const text = data.choices?.[0]?.message?.content || "";
 
     // Parse JSON from response
     const jsonMatch = text.match(/\{[\s\S]*\}/);
