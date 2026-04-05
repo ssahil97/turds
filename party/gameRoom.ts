@@ -117,6 +117,7 @@ export class GameRoom extends Server {
       color: TEAM_COLORS[teamIndex],
       weapons: [DEFAULT_WEAPON, DEFAULT_WEAPON, DEFAULT_WEAPON],
       characters: [],
+      ready: false,
     });
 
     this.broadcastState();
@@ -130,12 +131,14 @@ export class GameRoom extends Server {
     while (team.weapons.length < 3) {
       team.weapons.push(DEFAULT_WEAPON);
     }
+    team.ready = true;
 
     this.broadcastState();
   }
 
   private handleStartGame() {
     if (this.gameState.teams.length < 2) return;
+    if (this.gameState.teams.some(team => !team.ready)) return;
     if (this.gameState.phase === "playing") return;
 
     // Create characters for each team

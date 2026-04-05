@@ -77,7 +77,9 @@ export const Lobby: React.FC<LobbyProps> = ({ client, gameState, onGameStart }) 
   }, [client]);
 
   const teamCount = gameState?.teams.length ?? 0;
+  const myTeam = gameState?.teams.find(t => t.playerId === client.playerId);
   const isHost = gameState?.teams[0]?.playerId === client.playerId;
+  const everyoneReady = gameState?.teams.every(t => t.ready) && teamCount >= 2;
 
   return (
     <div style={styles.container}>
@@ -152,19 +154,40 @@ export const Lobby: React.FC<LobbyProps> = ({ client, gameState, onGameStart }) 
           ))}
 
           <div style={styles.buttonRow}>
-            <button style={styles.button} onClick={handleReady}>
-              Ready Up
+            <button 
+              style={{
+                ...styles.button,
+                opacity: myTeam?.ready ? 0.6 : 1,
+                background: myTeam?.ready ? "#2ecc71" : "#e74c3c"
+              }} 
+              onClick={handleReady}
+              disabled={myTeam?.ready}
+            >
+              {myTeam?.ready ? "Ready!" : "Ready Up"}
             </button>
-            {isHost && teamCount >= 2 && (
-              <button style={{ ...styles.button, background: "#2ecc71" }} onClick={handleStart}>
-                Start Game!
+            {isHost && (
+              <button 
+                style={{ 
+                  ...styles.button, 
+                  background: everyoneReady ? "#2ecc71" : "rgba(255,255,255,0.1)",
+                  opacity: everyoneReady ? 1 : 0.5,
+                  cursor: everyoneReady ? "pointer" : "not-allowed"
+                }} 
+                onClick={handleStart}
+                disabled={!everyoneReady}
+              >
+                {teamCount < 2 ? "Waiting for players..." : everyoneReady ? "Start Game!" : "Waiting for ready..."}
               </button>
             )}
           </div>
 
           <p style={styles.hint}>
             {teamCount}/2 players —{" "}
-            {gameState?.teams.map((t) => t.name).join(" vs ") || "waiting..."}
+            {gameState?.teams.map((t) => (
+              <span key={t.playerId} style={{ color: t.color, fontWeight: t.ready ? "bold" : "normal" }}>
+                {t.name}{t.ready ? " (Ready)" : ""} {t === gameState?.teams[gameState.teams.length-1] ? "" : " vs "}
+              </span>
+            ))}
           </p>
         </div>
       )}

@@ -61,6 +61,7 @@ export interface Team {
   color: string;
   weapons: Weapon[];
   characters: CharacterState[];
+  ready: boolean;
 }
 
 // ─── Game State ───
