@@ -1,0 +1,37 @@
+{
+  "name": "turds",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "dev:worker": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://local_proxy@127.0.0.1:45753/git/ssahil97/turds"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "partysocket": "^1.1.16",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "simplex-noise": "^4.0.3",
+    "three": "^0.183.2"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@types/three": "^0.183.1",
+    "@vitejs/plugin-react": "^6.0.1",
+    "partyserver": "^0.4.1",
+    "typescript": "^6.0.2",
+    "vite": "^8.0.3",
+    "wrangler": "^4.80.0"
+  }
+}
