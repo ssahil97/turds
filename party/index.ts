@@ -1,3 +1,4 @@
+import { routePartykitRequest } from "partyserver";
 export { GameRoom } from "./gameRoom";
 
 export default {
@@ -9,6 +10,8 @@ export default {
       return handleWeaponGeneration(request, env);
     }
 
+    const partyResponse = await routePartykitRequest(request, env);
+    if (partyResponse) return partyResponse;
     return new Response("Not found", { status: 404 });
   },
 };
